@@ -5,61 +5,17 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
+	"sync"
 	"time"
-
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
-	requestCounter = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "app_requests_total",
-			Help: "Total number of HTTP requests",
-		},
-		[]string{"method", "endpoint", "status"},
-	)
-
-	requestDuration = prometheus.NewHistogramVec(
-		prometheus.HistogramOpts{
-			Name:    "app_request_duration_seconds",
-			Help:    "HTTP request latency in seconds",
-			Buckets: prometheus.DefBuckets,
-		},
-		[]string{"method", "endpoint"},
-	)
-
-	processedItems = prometheus.NewGaugeVec(
-		prometheus.GaugeOpts{
-			Name: "app_processed_items",
-			Help: "Number of items processed",
-		},
-		[]string{"type"},
-	)
-
-	errorCounter = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "app_errors_total",
-			Help: "Total number of errors",
-		},
-		[]string{"type"},
-	)
-
-	cpuLoad = prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Name: "app_cpu_load",
-			Help: "Application CPU load simulation",
-		},
-	)
+	mu              sync.Mutex
+	requestCount    int64
+	errorCount      int64
+	processedItemsA int64 = 50
+	processedItemsB int64 = 30
 )
-
-func init() {
-	prometheus.MustRegister(requestCounter)
-	prometheus.MustRegister(requestDuration)
-	prometheus.MustRegister(processedItems)
-	prometheus.MustRegister(errorCounter)
-	prometheus.MustRegister(cpuLoad)
-}
 
 func recordMetrics() {
 	go func() {
@@ -67,36 +23,64 @@ func recordMetrics() {
 		defer ticker.Stop()
 
 		for range ticker.C {
-			// Simulate metrics
-			processedItems.WithLabelValues("type_a").Set(float64(rand.Intn(100)))
-			processedItems.WithLabelValues("type_b").Set(float64(rand.Intn(100)))
+			mu.Lock()
+			processedItemsA = int64(rand.Intn(100))
+			processedItemsB = int64(rand.Intn(100))
+			mu.Unlock()
 
-			cpuLoad.Set(math.Sin(float64(time.Now().Unix()%60)) * 50 + 50)
-
-			if rand.Float64() > 0.9 {
-				errorCounter.WithLabelValues("type_error").Inc()
+			if rand.Float64() > 0.95 {
+				mu.Lock()
+				errorCount++
+				mu.Unlock()
 			}
 		}
 	}()
 }
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
-	start := time.Now()
-	defer func() {
-		duration := time.Since(start).Seconds()
-		requestDuration.WithLabelValues(r.Method, r.URL.Path).Observe(duration)
-	}()
-
 	status := 200
 	if rand.Float64() > 0.95 {
 		status = 500
-		errorCounter.WithLabelValues("request_error").Inc()
+		mu.Lock()
+		errorCount++
+		mu.Unlock()
 	}
 
-	requestCounter.WithLabelValues(r.Method, r.URL.Path, fmt.Sprintf("%d", status)).Inc()
+	mu.Lock()
+	requestCount++
+	mu.Unlock()
 
 	w.WriteHeader(status)
 	fmt.Fprintf(w, "Hello from sample app! Status: %d\n", status)
+}
+
+func metricsHandler(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	cpuLoad := math.Sin(float64(time.Now().Unix()%60)) * 50 + 50
+
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	fmt.Fprintf(w, "# HELP app_requests_total Total HTTP requests\n")
+	fmt.Fprintf(w, "# TYPE app_requests_total counter\n")
+	fmt.Fprintf(w, "app_requests_total{method=\"GET\",endpoint=\"/\",status=\"200\"} %d\n", requestCount)
+
+	fmt.Fprintf(w, "# HELP app_errors_total Total errors\n")
+	fmt.Fprintf(w, "# TYPE app_errors_total counter\n")
+	fmt.Fprintf(w, "app_errors_total{type=\"request_error\"} %d\n", errorCount)
+
+	fmt.Fprintf(w, "# HELP app_processed_items Number of items processed\n")
+	fmt.Fprintf(w, "# TYPE app_processed_items gauge\n")
+	fmt.Fprintf(w, "app_processed_items{type=\"type_a\"} %d\n", processedItemsA)
+	fmt.Fprintf(w, "app_processed_items{type=\"type_b\"} %d\n", processedItemsB)
+
+	fmt.Fprintf(w, "# HELP app_cpu_load Application CPU load simulation\n")
+	fmt.Fprintf(w, "# TYPE app_cpu_load gauge\n")
+	fmt.Fprintf(w, "app_cpu_load %.2f\n", cpuLoad)
+
+	fmt.Fprintf(w, "# HELP app_up Application uptime\n")
+	fmt.Fprintf(w, "# TYPE app_up gauge\n")
+	fmt.Fprintf(w, "app_up 1\n")
 }
 
 func main() {
@@ -107,7 +91,7 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, "healthy")
 	})
-	http.Handle("/metrics", promhttp.Handler())
+	http.HandleFunc("/metrics", metricsHandler)
 
 	fmt.Println("Starting sample app on :8888")
 	http.ListenAndServe(":8888", nil)
