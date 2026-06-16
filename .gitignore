@@ -1,0 +1,27 @@
+# Docker volumes and data
+prometheus_data/
+grafana_data/
+alertmanager_data/
+
+# Local environment files
+.env
+.env.local
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Go build artifacts
+*.o
+*.a
+*.so
+.DS_Store
+go.sum

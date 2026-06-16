@@ -1,0 +1,17 @@
+*.md
+.git
+.gitignore
+.docker
+.env
+.env.local
+docker-compose.yml
+Makefile
+*.swp
+*.swo
+*~
+.DS_Store
+node_modules
+__pycache__
+.pytest_cache
+.venv
+venv
