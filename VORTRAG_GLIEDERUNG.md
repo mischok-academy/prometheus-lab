@@ -230,10 +230,10 @@ Prometheus (alle 15 Sekunden):
 cd /home/moritzkraus/src/prometheus-lab
 
 # 2. Starten
-docker-compose up -d
+docker compose up -d
 
 # 3. Status prüfen
-docker-compose ps
+docker compose ps
 ```
 
 ### 4.2 Prometheus Konfiguration
@@ -310,7 +310,7 @@ scrape_configs:
 5. Graph anzeigen lassen (letzte Stunde)
 6. Targets anzeigen: http://localhost:9090/targets
    - Alle 7 Services sollten grün sein
-7. Service ausschalten (z.B. docker-compose stop sample-app)
+7. Service ausschalten (z.B. docker compose stop sample-app)
    - Target wird rot (DOWN)
 8. Service wieder anschalten
    - Target wird grün

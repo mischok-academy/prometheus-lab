@@ -234,7 +234,7 @@ Folge HANDOUT_03_GRAFANA_TUTORIAL.md für die detaillierten Schritte
    - Konfiguriere einen einfachen Webhook Receiver
 
 3. **Testen**
-   - Triggere Alert: `docker-compose exec -T node-exporter stress --cpu 1 --timeout 120s`
+   - Triggere Alert: `docker compose exec -T node-exporter stress --cpu 1 --timeout 120s`
    - Schau Prometheus Alerts: http://localhost:9090/alerts
    - Schau AlertManager: http://localhost:9093
 
@@ -267,7 +267,7 @@ Siehe `alertmanager.yml` - dort sind Kommentare für Slack/Email
 
 2. **Rebuild**
    ```bash
-   docker-compose restart sample-app
+   docker compose restart sample-app
    ```
 
 3. **Testen**
@@ -379,18 +379,18 @@ Ein Service antwortet nicht mehr. Was machst du?
 
 2. **Logs anschauen**
    ```bash
-   docker-compose logs SERVICE_NAME
+   docker compose logs SERVICE_NAME
    ```
    - Gibt es Error-Messages?
 
 3. **Service neu starten**
    ```bash
-   docker-compose restart SERVICE_NAME
+   docker compose restart SERVICE_NAME
    ```
 
 4. **Status überprüfen**
    ```bash
-   docker-compose ps
+   docker compose ps
    ```
 
 ### Aufgabe
@@ -398,13 +398,13 @@ Starte diese Challenge:
 
 ```bash
 # 1. Stoppe einen Service bewusst
-docker-compose stop sample-app
+docker compose stop sample-app
 
 # 2. Was siehst du in Prometheus Targets?
 # Beantworte: Ist der Service als DOWN sichtbar?
 
 # 3. Starte ihn wieder
-docker-compose start sample-app
+docker compose start sample-app
 
 # 4. Wie lange dauert es bis er wieder als UP angezeigt wird?
 ```

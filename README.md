@@ -41,13 +41,13 @@ A complete Docker Compose environment for testing and learning Prometheus monito
 ### 1. Start the Lab
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Wait for all containers to be healthy:
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 ### 2. Access the Services
@@ -165,7 +165,7 @@ curl -X POST http://localhost:9090/-/reload
 Trigger a high CPU alert:
 ```bash
 # From any container
-docker-compose exec prometheus wget -O- http://node-exporter:9100/metrics | grep node_cpu
+docker compose exec prometheus wget -O- http://node-exporter:9100/metrics | grep node_cpu
 ```
 
 Or manually create an alert condition:
@@ -204,7 +204,7 @@ curl http://localhost:9093/api/v1/alerts | jq .
 Edit `sample-app/main.go` and restart:
 
 ```bash
-docker-compose restart sample-app
+docker compose restart sample-app
 ```
 
 ### Add Custom Metrics to Sample App
@@ -230,31 +230,31 @@ func init() {
 3. Restart AlertManager:
 
 ```bash
-docker-compose restart alertmanager
+docker compose restart alertmanager
 ```
 
 ## Cleanup
 
 ### Stop All Services
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Stop and Remove Volumes
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 ### View Logs
 
 ```bash
 # All services
-docker-compose logs -f
+docker compose logs -f
 
 # Specific service
-docker-compose logs -f prometheus
-docker-compose logs -f grafana
-docker-compose logs -f alertmanager
+docker compose logs -f prometheus
+docker compose logs -f grafana
+docker compose logs -f alertmanager
 ```
 
 ## Troubleshooting
@@ -266,11 +266,11 @@ docker-compose logs -f alertmanager
 curl http://localhost:9090/api/v1/targets
 
 # Verify service is running
-docker-compose ps
+docker compose ps
 
 # Check service logs
-docker-compose logs prometheus
-docker-compose logs node-exporter
+docker compose logs prometheus
+docker compose logs node-exporter
 ```
 
 ### Grafana can't connect to Prometheus
@@ -280,24 +280,24 @@ docker-compose logs node-exporter
 curl http://localhost:9090/-/healthy
 
 # Check Grafana logs
-docker-compose logs grafana
+docker compose logs grafana
 ```
 
 ### AlertManager not sending notifications
 
 ```bash
 # Check AlertManager logs
-docker-compose logs alertmanager
+docker compose logs alertmanager
 
 # Verify configuration
-docker-compose exec alertmanager amtool config routes
+docker compose exec alertmanager amtool config routes
 ```
 
 ### Sample app metrics not appearing
 
 ```bash
 # Check if service is running
-docker-compose logs sample-app
+docker compose logs sample-app
 
 # Verify metrics endpoint
 curl http://localhost:8888/metrics

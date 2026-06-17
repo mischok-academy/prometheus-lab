@@ -8,7 +8,7 @@
 ```bash
 git clone https://github.com/mischok-academy/prometheus-lab.git
 cd /home/moritzkraus/src/prometheus-lab
-docker-compose up -d
+docker compose up -d
 ```
 
 ### 2. Services öffnen
@@ -63,19 +63,19 @@ HTTP-Requests pro Sekunde um 14:02 Uhr = 1250
 
 ### Status überprüfen
 ```bash
-docker-compose ps
+docker compose ps
 ```
 ✅ Alle sollten "Up" sein
 
 ### Logs anschauen
 ```bash
-docker-compose logs -f prometheus
-docker-compose logs -f sample-app
+docker compose logs -f prometheus
+docker compose logs -f sample-app
 ```
 
 ### Alles neustarten
 ```bash
-docker-compose restart
+docker compose restart
 ```
 
 ---
@@ -116,9 +116,9 @@ docker-compose restart
 
 ### Problem: Container crasht
 ```bash
-docker-compose logs CONTAINER_NAME
+docker compose logs CONTAINER_NAME
 # CONTAINER_NAME durch echten Namen ersetzen
-# z.B.: docker-compose logs prometheus
+# z.B.: docker compose logs prometheus
 ```
 
 ### Problem: Port ist belegt
@@ -126,8 +126,8 @@ docker-compose logs CONTAINER_NAME
 # Prüfe welcher Process Port 9090 nutzt
 lsof -i :9090
 # Oder: stoppe alles und starte neu
-docker-compose down
-docker-compose up -d
+docker compose down
+docker compose up -d
 ```
 
 ### Problem: Keine Metriken sichtbar

@@ -8,17 +8,17 @@
 
 ### Symptom
 ```bash
-docker-compose up -d
+docker compose up -d
 # Error: ... (irgendein Fehler)
 ```
 
 ### Diagnostik
 ```bash
 # 1. Status überprüfen
-docker-compose ps
+docker compose ps
 
 # 2. Logs anschauen
-docker-compose logs
+docker compose logs
 ```
 
 ### Lösungen
@@ -36,7 +36,7 @@ lsof -i :3000  # Für Grafana
 kill -9 PID
 
 # B) Oder warte bis Prozess stoppt
-# C) Oder ändere Port in docker-compose.yml
+# C) Oder ändere Port in docker compose.yml
 ```
 
 #### Lösung 2: Docker läuft nicht
@@ -71,7 +71,7 @@ sample-app-lab      Restarting (1) 5 seconds ago  ← Problem!
 
 ### Diagnostik
 ```bash
-docker-compose logs sample-app --tail=50
+docker compose logs sample-app --tail=50
 ```
 
 ### Häufige Fehler
@@ -82,10 +82,10 @@ docker-compose logs sample-app --tail=50
 **Lösung:**
 ```bash
 # 1. Prüfe ob Target läuft
-docker-compose ps
+docker compose ps
 
 # 2. Starte alle Services
-docker-compose restart
+docker compose restart
 
 # 3. Warte 30 Sekunden, dann nochmal prüfen
 ```
@@ -96,7 +96,7 @@ docker-compose restart
 **Lösung:**
 ```bash
 # Erhöhe Docker RAM-Limit
-# In docker-compose.yml bei problematischem Service:
+# In docker compose.yml bei problematischem Service:
 deploy:
   resources:
     limits:
@@ -109,10 +109,10 @@ deploy:
 **Lösung:**
 ```bash
 # Lies ganze Logs
-docker-compose logs SERVICE_NAME
+docker compose logs SERVICE_NAME
 
 # Suche nach "ERROR" oder "error"
-docker-compose logs SERVICE_NAME | grep -i error
+docker compose logs SERVICE_NAME | grep -i error
 ```
 
 ---
@@ -126,10 +126,10 @@ docker-compose logs SERVICE_NAME | grep -i error
 ### Diagnostik
 ```bash
 # 1. Läuft der Container?
-docker-compose ps prometheus
+docker compose ps prometheus
 
 # 2. Logs anschauen
-docker-compose logs prometheus
+docker compose logs prometheus
 
 # 3. Port prüfen
 curl http://localhost:9090  # Sollte HTML zurückgeben
@@ -139,7 +139,7 @@ curl http://localhost:9090  # Sollte HTML zurückgeben
 
 #### Lösung 1: Prometheus neu starten
 ```bash
-docker-compose restart prometheus
+docker compose restart prometheus
 
 # Warten Sie 10 Sekunden
 sleep 10
@@ -166,7 +166,7 @@ cat prometheus.yml
 df -h
 
 # Wenn voll: Docker volumes cleanen
-docker-compose down -v
+docker compose down -v
 docker system prune -a  # ⚠️ ACHTUNG: Löscht alles!
 ```
 
@@ -180,7 +180,7 @@ Prometheus → Targets → Service ist RED/DOWN
 ### Diagnostik
 ```bash
 # 1. Läuft Service im Container?
-docker-compose ps
+docker compose ps
 
 # 2. Kann man die Metriken manuell abholen?
 curl http://localhost:9100/metrics  # Node Exporter
@@ -192,7 +192,7 @@ curl http://localhost:8888/metrics  # Sample App
 #### Problem: Service ist nicht gestartet
 ```bash
 # Restart
-docker-compose restart SERVICE_NAME
+docker compose restart SERVICE_NAME
 
 # Warte 15 Sekunden (1 Scrape-Intervall)
 ```
@@ -306,7 +306,7 @@ curl http://localhost:9090/api/v1/alerts | jq
 curl http://localhost:9093/api/v1/alerts | jq
 
 # 3. Logs
-docker-compose logs prometheus | grep -i alert
+docker compose logs prometheus | grep -i alert
 ```
 
 ### Lösungen
@@ -344,7 +344,7 @@ cat alertmanager.yml
 
 # Sollte Routes definieren
 # Starte AlertManager neu
-docker-compose restart alertmanager
+docker compose restart alertmanager
 ```
 
 ---
@@ -419,14 +419,14 @@ du -sh prometheus_data/
 
 ### Symptom
 ```
-docker-compose up -d
-# Error: error parsing docker-compose.yml
+docker compose up -d
+# Error: error parsing docker compose.yml
 ```
 
 ### Diagnostik
 ```bash
 # YAML Syntax prüfen
-yamllint docker-compose.yml  # Falls yamllint installiert
+yamllint docker compose.yml  # Falls yamllint installiert
 
 # Oder: Einfach anschauen und auf Indentation prüfen
 ```
@@ -506,12 +506,12 @@ increase(app_requests_total[5m])
 ## 📋 Checkliste: Wenn nichts funktioniert
 
 - [ ] Docker läuft? (`docker ps`)
-- [ ] Container sind UP? (`docker-compose ps`)
+- [ ] Container sind UP? (`docker compose ps`)
 - [ ] Ports stimmen? (9090, 3000, 8888)
 - [ ] Firewall erlaubt Zugriff?
-- [ ] Logs gelesen? (`docker-compose logs`)
+- [ ] Logs gelesen? (`docker compose logs`)
 - [ ] System-Ressourcen ok? (`free -h`, `df -h`)
-- [ ] Alles neu gestartet? (`docker-compose restart`)
+- [ ] Alles neu gestartet? (`docker compose restart`)
 - [ ] Netzwerk ok? (`docker network ls`)
 
 ---
@@ -522,19 +522,19 @@ increase(app_requests_total[5m])
 # ⚠️ WARNUNG: Das löscht ALLE Daten!
 
 # Stoppe alles
-docker-compose down
+docker compose down
 
 # Lösche Volumes (Daten)
-docker-compose down -v
+docker compose down -v
 
 # Starte frisch
-docker-compose up -d
+docker compose up -d
 
 # Warte 30 Sekunden
 sleep 30
 
 # Prüfe
-docker-compose ps
+docker compose ps
 ```
 
 ---

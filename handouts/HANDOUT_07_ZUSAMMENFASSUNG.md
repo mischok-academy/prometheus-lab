@@ -33,19 +33,19 @@ Exporter (sammelt)  →  Prometheus (speichert)  →  Grafana (zeigt an)
 
 ```bash
 # Lab starten
-docker-compose up -d
+docker compose up -d
 
 # Logs sehen
-docker-compose logs SERVICE_NAME
+docker compose logs SERVICE_NAME
 
 # Status
-docker-compose ps
+docker compose ps
 
 # Neu starten
-docker-compose restart SERVICE_NAME
+docker compose restart SERVICE_NAME
 
 # Alles killen
-docker-compose down -v
+docker compose down -v
 ```
 
 ---
@@ -135,9 +135,9 @@ sum by (job) (up)  # Gruppiere pro Job
 ## 🔍 Debugging-Checkliste
 
 - [ ] Docker läuft? (`docker ps`)
-- [ ] Services UP? (`docker-compose ps`)
+- [ ] Services UP? (`docker compose ps`)
 - [ ] Ports erreichbar? (`curl http://localhost:9090`)
-- [ ] Logs gelesen? (`docker-compose logs`)
+- [ ] Logs gelesen? (`docker compose logs`)
 - [ ] Warte 30s? (Scrape-Interval!)
 - [ ] Firewall blockiert? (`ufw allow PORT`)
 - [ ] Disk voll? (`df -h`)
@@ -218,7 +218,7 @@ rate(app_requests_total[5m])
 ## 🆘 Ich bin stuck!
 
 **1. Symptom googeln:** "prometheus [dein error]"  
-**2. Logs lesen:** `docker-compose logs SERVICE | grep -i error`  
+**2. Logs lesen:** `docker compose logs SERVICE | grep -i error`  
 **3. Test in Prometheus Graph:** http://localhost:9090/graph  
 **4. Frag einen erfahreneren Kollegen**  
 **5. Schau Handouts:** HANDOUT_06_TROUBLESHOOTING.md
