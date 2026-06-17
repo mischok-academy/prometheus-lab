@@ -39,9 +39,8 @@ node_cpu_seconds_total{mode=~"idle|system"}
 # Wie viele Requests pro Sekunde in letzten 5 Min?
 rate(app_requests_total[5m])
 
-# Wie viel RAM wird pro Sekunde freigegeben?
-rate(node_memory_MemAvailable_bytes[5m])
 ```
+
 **Wann nutzen:** Bei Counter (Zähler), um saubere Werte zu bekommen
 
 ### increase() - Steigung
