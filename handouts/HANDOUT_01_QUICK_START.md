@@ -6,6 +6,7 @@
 
 ### 1. Lab starten
 ```bash
+git clone https://github.com/mischok-academy/prometheus-lab.git
 cd /home/moritzkraus/src/prometheus-lab
 docker-compose up -d
 ```
